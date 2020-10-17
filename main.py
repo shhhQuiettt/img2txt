@@ -21,8 +21,6 @@ def preproces(img):#prepare image to processing
     if height > MAX_RESOLUTION[1]:
         img = img.resize((int((MAX_RESOLUTION[1]/height) * width), MAX_RESOLUTION[1]))
 
-    img2letters(img, f"./out.txt")
-
     enhancer = ImageEnhance.Sharpness(img)
     factor = 36
     img =enhancer.enhance(factor)
@@ -44,17 +42,7 @@ def img2letters(img, path):
 
 src = f"./images/image2.jpg"
 img = Image.open(src).convert("L") #open in graySCALE
-
-
 img = preproces(img)
-
-
-
-
-
-
-
-
-#img.show()
 print("Process complete")
+
 img.close()
