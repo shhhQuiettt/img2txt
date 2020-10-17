@@ -1,5 +1,4 @@
 images/
-out.txt
 .idea/
 testenv/
-/outs/
+./outs/
