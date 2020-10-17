@@ -2,3 +2,4 @@ images/
 .idea/
 testenv/
 ./outs/
+/outs/
