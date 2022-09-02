@@ -1,47 +1,94 @@
 from PIL import Image, ImageEnhance
 from numpy import round
 from math import floor
+import config
+from typing import Tuple
 
-#font Libertum mono
+# font Libertum mono
 
-SCALE = """$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. """
-MAX_RESOLUTION = (300,300)
-S_PATH = f"./images/image2.jpg"
-D_PATH = f"./outs/out.txt"
 
-def px2char(p): #return corresponded char of given pixel
-    n = len(SCALE)
-    sc = int(round((p/255)*(n-1)))
-    return SCALE[sc]
+def main():
+    # TODO: Add system args
+    generate_txt_from_image()
 
-def preproces(img):#prepare image to processing
-    (width, height) = img.size
 
+def generate_txt_from_image(
+    *,
+    source_img_path: str,
+    destination_image_path: str = None,
+    scale: str = config.SCALE,
+    max_resolution: Tuple[int, int] = None,
+    quiet: bool = True,
+):
+    """Creates txt file containg letters that correspond to
+    pixels in darkness scale
+
+    Params
+    ------
+    source_img_path: str
+        Image path
+
+    destination_image_path: str
+        Output txt file path
+        Default name is [source name].txt
+
+    scale: str
+        Chars chain, that will replace corresponding pixels
+        from darkest to lightest
+
+    max_resolution: Tuple[int,int]
+        Maximal width and hight of the output txt file
+        in numbers of letters in line on line number
+
+    quiet: bool
+        Indicates if progress messages shoul be displayed
+    """
+
+    max_resolution = config.MAX_RESOLUTION if max_resolution is None else max_resolution
+
+    img = _get_image_in_gray_scale(source_img_path)
+    preprocessed_img = _preprocess_image(img=img, max_resolution=max_resolution)
+    _redner_image_in_txt(img=img, scale=scale, destination_file=destination_image_path)
+
+
+def _get_image_in_gray_scale(source_img_path: str) -> Image.Image:
+    with Image.open(source_img_path) as img:
+        return img.convert("L")
+
+
+def _preprocess_image(
+    *, img: Image.Image, max_resolution: str, sharpness_factor: 36
+) -> Image.Image:
+    width, height = img.size
+
+    # Resize image if bigger than max_resolution
     if width > MAX_RESOLUTION[0]:
-        img = img.resize((MAX_RESOLUTION[0], int((MAX_RESOLUTION[0]/width)*height)))
+        img = img.resize((MAX_RESOLUTION[0], int((MAX_RESOLUTION[0] / width) * height)))
     if height > MAX_RESOLUTION[1]:
-        img = img.resize((int((MAX_RESOLUTION[1]/height) * width), MAX_RESOLUTION[1]))
+        img = img.resize((int((MAX_RESOLUTION[1] / height) * width), MAX_RESOLUTION[1]))
 
     enhancer = ImageEnhance.Sharpness(img)
-    factor = 36
-    img =enhancer.enhance(factor)
+    img = enhancer.enhance(factor)
 
     return img
 
-def img2letters(img, D_PATH): #create out file with letter instead of pixels
+
+def _redner_image_in_txt(img: Image.Image, scale: str, destination_file: str) -> None:
     width, height = img.size
-    px = img.load()
-    file = open(D_PATH, "w")
-    for y in range(height):
-        for x in range(width):
-            file.write(px2char(px[x, y]))
-        file.write("\n")
-    file.close()
+    pixels = img.load()
+    with open(destination_file, "w") as file:
+        for y in range(height):
+            for x in range(width):
+                file.write(_px2char(pixels[x, y], scale))
+            file.write("\n")
 
-img = Image.open(S_PATH).convert("L") #open in graySCALE
-img = preproces(img)    #resizing, sharpness
-img2letters(img, D_PATH) #main action
 
-print("Process complete")
+def _px2char(px: int, scale) -> str:
+    scale_length = len(scale)
+    MAX_PX_VALUE = 255
+    scale_index = int(round((px / MAX_PX_VALUE) * (scale_length - 1)))
+    return scale[scale_index]
 
-img.close()
+
+if __name__ == "__main__":
+    main()
