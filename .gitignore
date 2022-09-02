@@ -1,5 +1,5 @@
 images/
 .idea/
+.vscode
 testenv/
-./outs/
-/outs/
+.venv
