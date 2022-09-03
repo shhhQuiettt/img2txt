@@ -8,7 +8,7 @@ def generate_txt_from_image(
     *,
     source_img_path: str,
     destination_img_path: str = None,
-    scale: str = config.SCALE,
+    scale: str = None,
     max_resolution: Tuple[int, int] = None,
     quiet: bool = True,
 ):
@@ -37,14 +37,26 @@ def generate_txt_from_image(
     """
 
     max_resolution = config.MAX_RESOLUTION if max_resolution is None else max_resolution
+    scale = config.SCALE if scale is None else scale
     if destination_img_path is None:
         destination_img_path = _get_destination_file_from_source(source_img_path)
 
+    if not quiet:
+        print("Loading image...")
     img = _get_image_in_gray_scale(source_img_path)
+
+    if not quiet:
+        print("Preparing image...")
     preprocessed_img = _preprocess_image(img=img, max_resolution=max_resolution)
+
+    if not quiet:
+        print(f"Rendering {destination_img_path} file...")
     _redner_image_in_txt(
         img=preprocessed_img, scale=scale, destination_file=destination_img_path
     )
+
+    if not quiet:
+        print("Done!")
 
 
 def _get_destination_file_from_source(source_file: str) -> str:

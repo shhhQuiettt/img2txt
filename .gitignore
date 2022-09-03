@@ -158,3 +158,6 @@ dmypy.json
 cython_debug/
 
 test_results/
+*.png
+*.jpg
+*.txt
