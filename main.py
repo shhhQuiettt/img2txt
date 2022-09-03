@@ -4,13 +4,6 @@ from math import floor
 import config
 from typing import Tuple
 
-# font Libertum mono
-
-
-def main():
-    # TODO: Add system args
-    generate_txt_from_image()
-
 
 def generate_txt_from_image(
     *,
@@ -88,7 +81,3 @@ def _px2char(px: int, scale) -> str:
     MAX_PX_VALUE = 255
     scale_index = int(round((px / MAX_PX_VALUE) * (scale_length - 1)))
     return scale[scale_index]
-
-
-if __name__ == "__main__":
-    main()
