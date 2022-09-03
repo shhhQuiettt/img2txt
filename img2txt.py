@@ -35,7 +35,7 @@ def generate_txt_from_image(
     quiet: bool
         Indicates if progress messages shoul be displayed
     """
-
+    scale = config.SCALE if scale is None else scale
     max_resolution = config.MAX_RESOLUTION if max_resolution is None else max_resolution
     scale = config.SCALE if scale is None else scale
     if destination_img_path is None:
@@ -72,6 +72,12 @@ def _get_image_in_gray_scale(source_img_path: str) -> Image.Image:
 def _preprocess_image(
     *, img: Image.Image, max_resolution: Tuple[int, int], sharpness_factor: int = 36
 ) -> Image.Image:
+
+    # Resizing because fonts height is bigger than width
+    width, height = img.size
+    img = img.resize((int(width * 2), height))
+
+    width, height = img.size
 
     # Resize image if bigger than max_resolution
     width, height = img.size
