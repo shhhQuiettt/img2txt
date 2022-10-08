@@ -161,3 +161,8 @@ test_results/
 *.png
 *.jpg
 *.txt
+*.webp
+*.gif
+*.jpeg
+*.bmp
+*.tiff

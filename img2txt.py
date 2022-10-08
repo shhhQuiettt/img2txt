@@ -51,7 +51,7 @@ def generate_txt_from_image(
 
     if not quiet:
         print(f"Rendering {destination_img_path} file...")
-    _redner_image_in_txt(
+    _render_image_in_txt(
         img=preprocessed_img, scale=scale, destination_file=destination_img_path
     )
 
@@ -94,7 +94,7 @@ def _preprocess_image(
     return img
 
 
-def _redner_image_in_txt(img: Image.Image, scale: str, destination_file: str) -> None:
+def _render_image_in_txt(img: Image.Image, scale: str, destination_file: str) -> None:
     width, height = img.size
     pixels = img.load()
     with open(destination_file, "w") as file:
